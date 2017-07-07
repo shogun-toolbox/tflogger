@@ -3,7 +3,7 @@
 
 #include <chrono>
 #include <iostream>
-#include <strstream>
+#include <sstream>
 
 using namespace tflogger;
 
@@ -93,10 +93,9 @@ bool EventLogger::init()
     // Write the first event with the current version
     tensorflow::Event event;
     event.set_wall_time(nowSeconds);
-    std::ostrstream fileVersion;
+    std::ostringstream fileVersion;
     fileVersion << kVersionPrefix << kCurrentVersion << std::ends;
     event.set_file_version(fileVersion.str());
-    fileVersion.freeze(false);
     writeEvent(event);
     flush();
 

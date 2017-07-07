@@ -1,8 +1,8 @@
 #include <catch.hpp>
 
 #include <chrono>
+#include <sstream>
 #include <string>
-#include <strstream>
 
 #include <google/protobuf/text_format.h>
 #include <google/protobuf/util/message_differencer.h>
@@ -46,11 +46,9 @@ bool readEventProto(RecordReader& reader, tensorflow::Event* proto)
 
 std::string getCurrentFileVersion()
 {
-    std::ostrstream fileVersion;
+    std::ostringstream fileVersion;
     fileVersion << kVersionPrefix << kCurrentVersion << std::ends;
-    std::string fv = fileVersion.str();
-    fileVersion.freeze(false);
-    return fv;
+    return fileVersion.str();
 }
 
 TEST_CASE("EventLogger - default test", "[EventLogger][create/write]") {
