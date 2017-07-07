@@ -93,9 +93,7 @@ bool EventLogger::init()
     // Write the first event with the current version
     tensorflow::Event event;
     event.set_wall_time(nowSeconds);
-    std::ostringstream fileVersion;
-    fileVersion << kVersionPrefix << kCurrentVersion << std::ends;
-    event.set_file_version(fileVersion.str());
+    event.set_file_version(kFileVersion);
     writeEvent(event);
     flush();
 
@@ -111,3 +109,9 @@ std::string EventLogger::generateFileName(const int64_t& nowSeconds) const
     std::snprintf(&buf[0], buf.size(), fmt, mPrefix.c_str(), nowSeconds, hostName.c_str());
     return std::string(buf.data(), buf.size());
 }
+
+std::string EventLogger::kFileVersion = []() -> std::string {
+    std::ostringstream fileVersion(EventLogger::kVersionPrefix, std::ios_base::ate);
+    fileVersion << EventLogger::kCurrentVersion;
+    return fileVersion.str();
+}();

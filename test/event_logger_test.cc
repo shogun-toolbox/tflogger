@@ -1,7 +1,6 @@
 #include <catch.hpp>
 
 #include <chrono>
-#include <sstream>
 #include <string>
 
 #include <google/protobuf/text_format.h>
@@ -44,13 +43,6 @@ bool readEventProto(RecordReader& reader, tensorflow::Event* proto)
     return decodeEvent(record, proto);
 }
 
-std::string getCurrentFileVersion()
-{
-    std::ostringstream fileVersion;
-    fileVersion << kVersionPrefix << kCurrentVersion << std::ends;
-    return fileVersion.str();
-}
-
 TEST_CASE("EventLogger - default test", "[EventLogger][create/write]") {
     tflogger::EventLogger eventLogger("tf");
 
@@ -79,7 +71,7 @@ TEST_CASE("EventLogger - default test", "[EventLogger][create/write]") {
         REQUIRE(readEventProto(rr, &actual));
 
         REQUIRE(std::abs(actual.wall_time()-nowSeconds) <= 5);
-        REQUIRE_THAT(actual.file_version(), Catch::Equals(getCurrentFileVersion()));
+        REQUIRE_THAT(actual.file_version(), Catch::Equals(EventLogger::kFileVersion));
 
         tensorflow::Event expected;
         REQUIRE(readEventProto(rr, &actual));

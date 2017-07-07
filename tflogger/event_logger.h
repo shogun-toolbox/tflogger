@@ -15,6 +15,12 @@ namespace tflogger
     class EventLogger
     {
         public:
+            // Prefix of version string present in the first entry of every event file.
+            static constexpr const char* kVersionPrefix = "brain.Event:";
+            static constexpr const int kCurrentVersion = 2;
+            static std::string kFileVersion;
+
+        public:
             explicit EventLogger(const char* prefix);
             ~EventLogger();
             
@@ -38,9 +44,6 @@ namespace tflogger
             std::unique_ptr<std::ofstream> mOutputStream;
     };
     
-    // Prefix of version string present in the first entry of every event file.
-    static constexpr const char* kVersionPrefix = "brain.Event:";
-    static constexpr const int kCurrentVersion = 2;
 }
 
 #endif /* __EVENT_LOGGER_H__ */
