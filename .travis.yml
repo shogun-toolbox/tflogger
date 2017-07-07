@@ -1,16 +1,14 @@
+dist: trusty
+sudo: false
 language: cpp
-sudo: required
 
-compiler:
-  - clang
-  - gcc
-os:
-  - linux
-  - osx
-
-before_install:
-  - sudo apt-get -qq update
-  - sudo apt-get install -y protobuf-compiler libprotobuf-dev
+addons:
+  apt:
+    packages:
+    - cmake
+    - cmake-data
+    - protobuf-compiler
+    - libprotobuf-dev
 
 script:
   - mkdir build
