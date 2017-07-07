@@ -30,7 +30,7 @@ set(TFLOGGER_SRC
   tflogger/utils.cc
   ${PROTO_SRCS})
 set(TFLOGGER_HEADERS
-  tflogger/tensorflow_logger.h
+  tflogger/event_logger.h
   tflogger/utils.h
   ${PROTO_HDRS})
 add_library(tflogger ${TFLOGGER_SRC})
