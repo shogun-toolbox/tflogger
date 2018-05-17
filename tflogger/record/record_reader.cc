@@ -37,7 +37,7 @@ Status RecordReader::readChecksummed(size_t length, std::string* data)
     const size_t expected = length + sizeof(uint32_t);
     data->resize(expected);
     mInputStream.read(&(data->front()), expected);
-    
+
     if (mInputStream.fail())
         return Status::IOError;
 

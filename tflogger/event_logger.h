@@ -23,7 +23,7 @@ namespace tflogger
         public:
             explicit EventLogger(const char* prefix);
             ~EventLogger();
-            
+
             void writeEvent(const tensorflow::Event& event);
             void writeSerializedEvent(const std::string& eventStr);
 
@@ -43,7 +43,7 @@ namespace tflogger
             std::unique_ptr<RecordWriter> mRecordWriter;
             std::unique_ptr<std::ofstream> mOutputStream;
     };
-    
+
 }
 
 #endif /* __EVENT_LOGGER_H__ */
