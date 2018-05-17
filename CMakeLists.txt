@@ -19,6 +19,7 @@ endif()
 if(NOT INCLUDE_INSTALL_DIR)
   set(INCLUDE_INSTALL_DIR include)
 endif()
+find_package(Catch2)
 find_package(Protobuf REQUIRED)
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
