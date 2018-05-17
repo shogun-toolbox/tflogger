@@ -19,7 +19,7 @@ namespace tflogger
 namespace utils
 {
     constexpr bool kLittleEndian = __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__;
-    
+
     std::string Hostname();
 
     void EncodeFixed16(char* dst, uint16_t value);
@@ -50,8 +50,8 @@ namespace utils
         uint64_t result;
         memcpy(&result, ptr, sizeof(result));  // gcc optimizes this to a plain load
         return result;
-      } 
-      else 
+      }
+      else
       {
         uint64_t lo = DecodeFixed32(ptr);
         uint64_t hi = DecodeFixed32(ptr + 4);

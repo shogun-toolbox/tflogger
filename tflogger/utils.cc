@@ -58,5 +58,5 @@ std::string tflogger::utils::Hostname()
     gethostname(hostname, sizeof hostname);
     hostname[sizeof hostname - 1] = 0;
     return std::string(hostname);
-#endif  
+#endif
 }
