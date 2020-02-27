@@ -44,7 +44,7 @@ set(TFLOGGER_HEADERS
   tflogger/utils.h
   ${PROTO_HDRS})
 add_library(tflogger ${TFLOGGER_SRC})
-target_link_libraries(tflogger ${PROTOBUF_LIBRARIES})
+target_link_libraries(tflogger PUBLIC protobuf::libprotobuf)
 set_target_properties(tflogger
   PROPERTIES
     SOVERSION ${TFLOGGER_SOVERSION}
