@@ -12,10 +12,10 @@ jobs:
     - uses: actions/checkout@v2
     - name: add protobuf
       run: sudo apt-get install protobuf-compiler libprotobuf-dev -y
-      if: ${{ matrix.os }} == 'ubuntu-latest'
+      if: matrix.os == 'ubuntu-latest'
     - name: add protobuf
       run: brew install protobuf
-      if: ${{ matrix.os }} == 'macos-latest'
+      if: matrix.os == 'macos-latest'
     - name: create build
       run: mkdir build
     - name: configure
