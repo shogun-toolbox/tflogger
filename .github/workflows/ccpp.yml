@@ -1,0 +1,19 @@
+name: C/C++ CI
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+    - name: create build
+      run: mkdir build
+    - name: configure
+      run: cd build; cmake -DBUILD_TESTS=ON ..
+    - name: build
+      run: cd build; cmake --build . --target all
+    - name: test
+      run: cd build; ctest 
