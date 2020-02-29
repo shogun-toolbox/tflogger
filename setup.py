@@ -8,18 +8,12 @@ from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
 from distutils.version import LooseVersion
 from distutils import dir_util, file_util
-from distutils.command.sdist import sdist
 
 
 class CMakeExtension(Extension):
     def __init__(self, name, sourcedir=''):
         Extension.__init__(self, name, sources=[])
         self.sourcedir = os.path.abspath(sourcedir)
-
-class (sdist):
-    def __init__():
-
-    self.template =
 class CMakeBuild(build_ext):
     def run(self):
         try:
@@ -69,7 +63,7 @@ with open('README.md') as f:
 
 setup(
     name='tflogger',
-    version='1.0.0',
+    version='1.0.1',
     author='Viktor Gal',
     author_email='viktor.gal@maeth.com',
     url='https://github.com/shogun-toolbox/tflogger',
