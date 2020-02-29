@@ -62,7 +62,7 @@ add_subdirectory(examples/cpp)
 
 OPTION(BUILD_TESTS "Build tests")
 if(BUILD_TESTS)
-  find_package(Catch2 CONFIG REQUIRED)
+  find_package(Catch2 CONFIG)
   set(THIRD_PARTY_PATH ${CMAKE_SOURCE_DIR}/third_party)
   enable_testing()
   add_subdirectory(test)
