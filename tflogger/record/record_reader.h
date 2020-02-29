@@ -1,27 +1,31 @@
 #ifndef __RECORD_READER_H__
 #define __RECORD_READER_H__
 
-#include <istream>
+#include <memory>
 #include <string>
 
-#include <tflogger/status.h>
+#include <google/protobuf/io/coded_stream.h>
+#include <google/protobuf/io/zero_copy_stream.h>
+
+#include "tflogger/status.h"
 
 namespace tflogger
 {
     class RecordReader
     {
         public:
-            RecordReader(std::istream& input);
-            ~RecordReader();
+            RecordReader(const std::shared_ptr<google::protobuf::io::ZeroCopyInputStream>& input);
+            ~RecordReader() = default;
 
-            Status readRecord(std::string* record);
-
-        private:
-            const uint64_t readRecordLength();
-            Status readChecksummed(size_t length, std::string* data);
+            Status readRecord(std::string* record) const;
 
         private:
-            std::istream& mInputStream;
+            const uint64_t readRecordLength() const;
+            Status readChecksummed(size_t length, std::string* data) const;
+
+        private:
+            std::shared_ptr<google::protobuf::io::ZeroCopyInputStream> mZeroIn;
+            std::unique_ptr<google::protobuf::io::CodedInputStream> mInputStream;
     };
 }
 

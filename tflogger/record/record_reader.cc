@@ -1,18 +1,15 @@
-#include <tflogger/record/record_reader.h>
-#include <tflogger/utils.h>
+#include "tflogger/record/record_reader.h"
+#include "tflogger/utils.h"
 
 using namespace tflogger;
+using namespace google::protobuf::io;
 
-RecordReader::RecordReader(std::istream& input):
-    mInputStream(input)
+RecordReader::RecordReader(const std::shared_ptr<ZeroCopyInputStream>& input): mZeroIn(input)
 {
+    mInputStream.reset(new CodedInputStream(mZeroIn.get()));
 }
 
-RecordReader::~RecordReader()
-{
-}
-
-Status RecordReader::readRecord(std::string* record)
+Status RecordReader::readRecord(std::string* record) const
 {
     static const size_t kHeaderSize = sizeof(uint64_t) + sizeof(uint32_t);
     static const size_t kFooterSize = sizeof(uint32_t);
@@ -32,35 +29,35 @@ Status RecordReader::readRecord(std::string* record)
 }
 
 
-Status RecordReader::readChecksummed(size_t length, std::string* data)
+Status RecordReader::readChecksummed(size_t length, std::string* data) const
 {
-    const size_t expected = length + sizeof(uint32_t);
-    data->resize(expected);
-    mInputStream.read(&(data->front()), expected);
-
-    if (mInputStream.fail())
+    //data->resize(length);
+    if (!mInputStream->ReadString(data, length))
         return Status::IOError;
 
-    if (mInputStream.eof())
+    if (mInputStream->ExpectAtEnd())
         return Status::EndOfFile;
 
-    if (data->size() != expected)
+    if (data->size() != length)
         return Status::DataLoss;
 
-    uint32_t masked_crc = utils::DecodeFixed32(data->data() + length);
+    uint32_t masked_crc;
+    if (!mInputStream->ReadLittleEndian32(&masked_crc))
+        return Status::IOError;
     if (crc32c::Unmask(masked_crc) != crc32c::Value(data->data(), length)) {
         return Status::CorruptedData;
     }
-    data->erase(length, sizeof(uint32_t));
     return Status::OK;
 }
 
-const uint64_t RecordReader::readRecordLength()
+const uint64_t RecordReader::readRecordLength() const
 {
     std::string header;
     header.reserve(sizeof(uint64_t));
     auto status = readChecksummed(sizeof(uint64_t), &header);
     if (status != Status::OK)
         return status;
-    return utils::DecodeFixed64(header.data());
+    uint64_t recordLength;
+    CodedInputStream::ReadLittleEndian64FromArray((const uint8_t*)header.data(), &recordLength);
+    return recordLength;
 }

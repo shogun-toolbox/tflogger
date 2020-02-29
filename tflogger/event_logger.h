@@ -1,11 +1,17 @@
 #ifndef __EVENT_LOGGER_H__
 #define __EVENT_LOGGER_H__
 
-#include <fstream>
+#include <memory>
 #include <string>
 
+#include <google/protobuf/io/zero_copy_stream_impl.h>
+
 #include <tflogger/record/record_writer.h>
-#include "event.pb.h"
+
+namespace tensorflow
+{
+    class Event;
+}
 
 namespace tflogger
 {
@@ -15,33 +21,27 @@ namespace tflogger
     class EventLogger
     {
         public:
-            // Prefix of version string present in the first entry of every event file.
-            static constexpr const char* kVersionPrefix = "brain.Event:";
-            static constexpr const int kCurrentVersion = 2;
-            static std::string kFileVersion;
-
-        public:
             explicit EventLogger(const char* prefix);
             ~EventLogger();
 
             void writeEvent(const tensorflow::Event& event);
             void writeSerializedEvent(const std::string& eventStr);
+            void writeSerializedEvent(const char* eventStr, size_t len);
 
             bool init();
-            bool flush();
             bool close();
 
-            std::string fileName();
+            std::string filename();
 
         private:
-            std::string generateFileName(const int64_t& nowSeconds) const;
+            std::string generateFilename(const int64_t& nowSeconds) const;
 
         private:
             const std::string mPrefix;
-            std::string mFileName;
+            std::string mFilename;
 
             std::unique_ptr<RecordWriter> mRecordWriter;
-            std::unique_ptr<std::ofstream> mOutputStream;
+            std::shared_ptr<google::protobuf::io::FileOutputStream> mOutputStream;
     };
 
 }

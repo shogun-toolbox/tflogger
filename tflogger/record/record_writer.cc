@@ -1,29 +1,48 @@
-#include <tflogger/record/record_writer.h>
-#include <tflogger/utils.h>
+#include "tflogger/record/record_writer.h"
+#include "tflogger/utils.h"
 
 using namespace tflogger;
+using namespace google::protobuf::io;
 
-RecordWriter::RecordWriter(std::ostream& output):
-    mOutputStream(output)
+RecordWriter::RecordWriter(const std::shared_ptr<ZeroCopyOutputStream>& output):
+    mZeroOut(output)
 {
+    mOutputStream.reset(new CodedOutputStream(mZeroOut.get()));
 }
 
-RecordWriter::~RecordWriter()
+bool RecordWriter::writeRecord(const char* record, const uint64_t len) const
 {
+    if (!writeHeader(len))
+        return false;
+    mOutputStream->WriteRaw(record, len);
+    writeFooter(utils::MaskedCrc(record, len));
+    return !mOutputStream->HadError();
 }
 
-
-bool RecordWriter::writeRecord(const std::string& record)
+bool RecordWriter::writeRecord(const std::string& record) const
 {
-    char header[sizeof(uint64_t) + sizeof(uint32_t)];
-    utils::EncodeFixed64(header + 0, record.size());
-    utils::EncodeFixed32(header + sizeof(uint64_t), utils::MaskedCrc(header, sizeof(uint64_t)));
-    char footer[sizeof(uint32_t)];
-    utils::EncodeFixed32(footer, utils::MaskedCrc(record.data(), record.size()));
-
-    mOutputStream.write(header, sizeof(header));
-    mOutputStream.write(record.data(), record.size());
-    mOutputStream.write(footer, sizeof(footer));
-    return !mOutputStream.fail();
+    if (!writeHeader(record.size()))
+        return false;
+    mOutputStream->WriteString(record);
+    writeFooter(utils::MaskedCrc(record.data(), record.size()));
+    return !mOutputStream->HadError();
 }
 
+bool RecordWriter::writeHeader(const uint64_t recordSize) const
+{
+    uint8_t* buffer =
+        mOutputStream->GetDirectBufferForNBytesAndAdvance(sizeof(uint64_t) + sizeof(uint32_t));
+    if (buffer != nullptr)
+    {
+        buffer = CodedOutputStream::WriteLittleEndian64ToArray(recordSize, buffer);
+        CodedOutputStream::WriteLittleEndian32ToArray(utils::MaskedCrc(
+            (char*)buffer-sizeof(uint64_t), sizeof(uint64_t)), buffer);
+        return true;
+    }
+    return false;
+}
+
+void RecordWriter::writeFooter(const uint32_t maskedCrc) const
+{
+    mOutputStream->WriteLittleEndian32(maskedCrc);
+}

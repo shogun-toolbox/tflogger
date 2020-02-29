@@ -2,17 +2,17 @@ include(ExternalProject)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 add_executable(tfloggerTest
-      event_logger_test.cc
-      record_test.cc
-      tflogger_test.cc
-      )
+  event_logger_test.cc
+  record_test.cc
+  tflogger_test.cc
+  )
 
 if(NOT TARGET Catch2::Catch)
   message(STATUS "Catch will be downloaded when ${CMAKE_PROJECT_NAME} is built")
   ExternalProject_Add(catch-lib
         PREFIX ${THIRD_PARTY_PATH}/Catch
         #--Download step--------------
-        URL https://github.com/catchorg/Catch2/archive/v2.2.2.zip
+        URL https://github.com/catchorg/Catch2/archive/v2.11.1.zip
         TIMEOUT 30
         #--Update/Patch step----------
         UPDATE_COMMAND ""

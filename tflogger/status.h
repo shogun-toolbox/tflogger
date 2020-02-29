@@ -9,7 +9,8 @@ namespace tflogger
         EndOfFile,
         IOError,
         DataLoss,
-        CorruptedData
+        CorruptedData,
+        InvalidVersion
     };
 }
 
