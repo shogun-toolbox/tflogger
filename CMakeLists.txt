@@ -1,5 +1,5 @@
 project(tflogger C CXX)
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.12)
 include(CMakePackageConfigHelpers)
 
 set(CMAKE_CXX_STANDARD 11)
@@ -58,7 +58,10 @@ set_target_properties(tflogger
 )
 add_library(tflogger::tflogger ALIAS tflogger)
 
-add_subdirectory(examples/cpp)
+OPTION(BUILD_EXAMPLES "Build examples")
+if(BUILD_EXAMPLES)
+  add_subdirectory(examples/cpp)
+endif()
 
 OPTION(BUILD_TESTS "Build tests")
 if(BUILD_TESTS)

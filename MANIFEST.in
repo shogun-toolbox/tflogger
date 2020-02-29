@@ -1,0 +1,6 @@
+include CMakeLists.txt LICENSE
+recursive-include cmake *
+recursive-include examples *
+recursive-include python *
+recursive-include tflogger *
+recursive-include test *
