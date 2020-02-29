@@ -1,21 +1,29 @@
 name: C/C++ CI
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   build:
-
-    runs-on: ubuntu-latest
-    
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v2
     - name: add protobuf
       run: sudo apt-get install protobuf-compiler libprotobuf-dev -y
+      if: ${{ matrix.os }} == 'ubuntu-latest'
+    - name: add protobuf
+      run: brew install protobuf
+      if: ${{ matrix.os }} == 'macos-latest'
     - name: create build
       run: mkdir build
     - name: configure
-      run: cd build; cmake -DBUILD_TESTS=ON ..
+      run: cmake -DBUILD_TESTS=ON ..
+      working-directory: ./build
     - name: build
-      run: cd build; cmake --build . --target all
+      run: cmake --build . --target all
+      working-directory: ./build
     - name: test
-      run: cd build; ctest 
+      run: ctest
+      working-directory: ./build
