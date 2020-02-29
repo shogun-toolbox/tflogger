@@ -9,6 +9,8 @@ jobs:
     
     steps:
     - uses: actions/checkout@v2
+    - name: add protobuf
+      run: sudo apt-get install protobuf-compiler libprotobuf-dev -y
     - name: create build
       run: mkdir build
     - name: configure
